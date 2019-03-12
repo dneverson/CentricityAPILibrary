@@ -470,6 +470,309 @@ function SetObsValue(obs, value) {
 };
 
 /*=========================================================================
+* ActiveObservations();
+* Output: ????? - "Observations"
+* Tested: true
+*========================================================================*/
+function ActiveObservations(){
+  return EvaluateMel('{ACTIVE_OBSERVATIONS}');
+};
+
+/*=========================================================================
+* LastSignedObsDate("BMI");
+* Output: 09/12/2018
+* Tested: true
+*========================================================================*/
+function LastSignedObsDate(obs){
+  return EvaluateMel('{LAST_SIGNED_OBS_DATE("'+obs+'")}');
+};
+
+/*=========================================================================
+* LastSignedObsDate("BMI");
+* Output: 09/12/2018 9:04:21 AM
+* Tested: true
+*========================================================================*/
+function LastSignedObsDateTime(obs){
+  return EvaluateMel('{LAST_SIGNED_OBS_DATETIME("'+obs+'")}');
+};
+
+/*=========================================================================
+* LastSignedObsValue("BMI");
+* Output: 16.93
+* Tested: true
+*========================================================================*/
+function LastSignedObsValue(obs){
+  return EvaluateMel('{LAST_SIGNED_OBS_VALUE("'+obs+'")}');
+};
+
+/*=========================================================================
+* LastSignedObsValue("BMI");
+* Output: 16.93 (09/12/2018 9:04:21 AM)
+* Tested: true
+*========================================================================*/
+function LastSignedObsValueDate(obs){
+  return EvaluateMel('{LAST_SIGNED_OBS_VALUEDATE("'+obs+'")}');
+};
+
+/*=========================================================================
+* LastObsDate("BMI");
+* Output: 09/12/2018
+* Tested: true
+*========================================================================*/
+function LastObsDate(obs){
+  return EvaluateMel('{LASTOBSDATE("'+obs+'")}');
+};
+
+/*=========================================================================
+* LastObsDateTime("BMI");
+* Output: 09/12/2018 9:04:21 AM
+* Tested: true
+*========================================================================*/
+function LastObsDateTime(obs){
+  return EvaluateMel('{LASTOBSDATETIME("'+obs+'")}');
+};
+
+/*=========================================================================
+* LastObsValue("BMI");
+* Output: 16.93
+* Tested: true
+*========================================================================*/
+function LastObsValue(obs){
+  return EvaluateMel('{LASTOBSVALUE("'+obs+'")}');
+};
+
+/*=========================================================================
+* LastObsValueByLoc("BMI");
+* Output: 16.93
+* Tested: true
+*========================================================================*/
+function LastObsValueByLoc(obs){
+  return EvaluateMel('{LASTOBSVALUEBYLOC("'+obs+'")}');
+};
+
+/*=========================================================================
+* LastObsValueByUser("BMI");
+* Output: 16.93
+* Tested: true
+*========================================================================*/
+function LastObsValueByUser(obs){
+  return EvaluateMel('{LASTOBSVALUEBYUSER("'+obs+'")}');
+};
+
+/*=========================================================================
+* LastObsValueDate("BMI");
+* Output: 16.93 (09/12/2018 9:04:21 AM)
+* Tested: true
+*========================================================================*/
+function LastObsValueDate(obs){
+  return EvaluateMel('{LASTOBSVALUEDATE("'+obs+'")}');
+};
+
+/*=========================================================================
+* ListObsValueByLoc("BMI");
+* Output: 16.93
+* Tested: true
+*========================================================================*/
+function ListObsValueByLoc(obs){
+  return EvaluateMel('{LISTOBSVALUEBYLOC("'+obs+'")}');
+};
+
+/*=========================================================================
+* ListObsValueByUser("BMI");
+* Output:
+* Tested: true
+*========================================================================*/
+function ListObsValueByUser(obs){
+  return EvaluateMel('{LISTOBSVALUEBYUSER("'+obs+'")}');
+};
+
+/*=========================================================================
+* ObsListChanges();
+* Output: "Added new observation of BMI:  (03/08/2019 9:05)"
+* Tested: true
+*========================================================================*/
+function ObsListChanges(){
+  return EvaluateMel('{OBS_LIST_CHANGES()}');
+};
+
+/*=========================================================================
+* ObsAny("BMI");
+* Output: 16.93
+* Tested: true
+*========================================================================*/
+function ObsAny(obs){
+  return EvaluateMel('{OBSANY("'+obs+'")}');
+};
+
+/*=========================================================================
+* ObsModifierAny("BMI");
+* Output: 16.93
+* Tested: true
+*========================================================================*/
+function ObsModifierAny(obs){
+  return EvaluateMel('{OBSMODIFIERANY("'+obs+'")}');
+};
+
+/*=========================================================================
+* ObsModifierNow("BMI","19.63");
+* Output: 16.93
+* Tested: true
+*========================================================================*/
+function ObsModifierNow(obs,val){
+  if(!val) return EvaluateMel('{OBSMODIFIERNOW("'+obs+'")}');
+  else return EvaluateMel('{OBSMODIFIERNOW("'+obs+'","'+val+'")}');
+};
+
+/*=========================================================================
+* ObsModifierPrev("BMI");
+* Output:
+* Tested: true
+*========================================================================*/
+function ObsModifierPrev(obs){
+  return EvaluateMel('{OBSMODIFIERPREV("'+obs+'")}');
+};
+
+/*=========================================================================
+* ObsNow("weight","155","02/01/2001");
+* Output: 16.93
+* Tested: true
+*========================================================================*/
+function ObsNow(obs,val,date){
+  return EvaluateMel('{OBSNOW("'+obs+'","'+val+'","'+date+'")}');
+};
+
+/*=========================================================================
+* ObsModifierPrev("BMI");
+* Output:
+* Tested: true
+*========================================================================*/
+function ObsPrev(obs){
+  return EvaluateMel('{OBSPREV("'+obs+'")}');
+};
+
+/*=========================================================================
+* ObsTagAny("BMI");
+* Output:
+* Tested: true
+*========================================================================*/
+function ObsTagAny(obs){
+  return EvaluateMel('{OBSTAGANY("'+obs+'")}');
+};
+
+/*=========================================================================
+* ObsTagNow("BMI","high");
+* Output: high
+* Tested: true
+*========================================================================*/
+function ObsTagNow(obs,val){
+  return EvaluateMel('{OBSTAGNOW("'+obs+'","'+val+'")}');
+};
+
+/*=========================================================================
+* ObsTagPrev("BMI");
+* Output:
+* Tested: true
+*========================================================================*/
+function ObsTagPrev(obs){
+  return EvaluateMel('{OBSTAGPREV("'+obs+'")}');
+};
+
+/*=========================================================================
+* ObsUnit("BMI");
+* Output: kg/m2
+* Tested: true
+*========================================================================*/
+function ObsUnit(obs){
+  return EvaluateMel('{OBSUNIT("'+obs+'")}');
+};
+
+/*=========================================================================
+* PotentObservations();
+* Output: ViewPencilObs
+* Tested: true
+*========================================================================*/
+function PotentObservations(){
+  return EvaluateMel('{POTENT_OBSERVATIONS}');
+};
+
+/*=========================================================================
+* PotentObservations();
+* Output: "Observations"
+* Tested: true
+*========================================================================*/
+function SumActiveObservations(){
+  return EvaluateMel('{SUM_ACTIVE_OBSERVATIONS}');
+};
+
+/*=========================================================================
+* Version 01 - Help parse delimited Lists from example ListObs()
+* Output: JSON
+* Tested: true
+*========================================================================*/
+function _defineProperty(obj, key, value){
+  if(key in obj) Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  else obj[key] = value;
+  return obj;
+};
+// Above function is required for ParseDelimList1() *!
+function ParseDelimList1(str){
+  return str.split(/[|]+/).reduce(function (op, inp, index) {
+    op[index] = inp.split(/[\^]+/).map(function (e, i) {
+      return _defineProperty({}, i, e);
+    });
+    return op;
+  }, {});
+};
+
+/*=========================================================================
+* Version 02 - Help parse delimited Lists from example ListObs()
+* Output: JSON
+* Tested: true
+*========================================================================*/
+function ParseDelimList2(str){
+  return str.split('|').map(function (a) {
+    return a.split('^').map(function (b) {
+      return b.split('~').map(function (c) {
+        return c.split(',');
+      });
+    });
+  });
+};
+
+/*=========================================================================
+* List all observation values, optionally with the date, of the specified
+  observation term.
+* Output:
+* Tested: true
+*========================================================================*/
+function ListObs(obs,status,format){
+  var ls = EvaluateMel('{LIST_OBS("'+obs+'","'+status+'","delimited","'+format+'")}');
+  ls = ParseDelimList2(ls);
+  var result = [];
+  for(var i=0; i<ls.length; i++){
+    result[i] = {
+      obsVal: ls[i][0],
+      obsDate: ls[i][1],
+      obsTime: ls[i][2],
+      signingUser: ls[i][3],
+      enteringUser: ls[i][4],
+      flags: ls[i][5],
+      comment: ls[i][6],
+      state: ls[i][7],
+      loc: ls[i][8],
+      docType: ls[i][9],
+      docID: ls[i][10]
+    };
+  };
+  return result;
+};
+
+/*=========================================================================
 * Output: JSON
 * Tested: true
 *========================================================================*/
