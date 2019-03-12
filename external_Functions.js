@@ -1136,6 +1136,8 @@ function SaveCareRequest(request){
 
 /*=========================================================================
 * SetChartValue("DOCUMENT.INITRUN" + window.external.FormId, "Hello")
+* NOTE: SetChartValue(): 1 Million+ CHAR Working;
+* NOTE: SetTextTranslation() (WORKS BETTER): 1 Million+ CHAR Working;
 * Output: N/A
 * Tested: true
 *========================================================================*/
@@ -1147,6 +1149,18 @@ function SetChartValue(chartVariableName, value){
     window.alert("Value length exceeds limit of 4000 characters.", true);
   }
   window.external.SetChartValue(chartVariableName, value);
+};
+
+/*=========================================================================
+* SetTextTranslation("<h1>Hello</h1>", "html");
+* NOTE: SetChartValue(): 1 Million+ CHAR Working;
+* NOTE: SetTextTranslation() (WORKS BETTER): 1 Million+ CHAR Working;
+* Output: Chart Notes
+* Tested: true
+*========================================================================*/
+function SetTextTranslation(text, isHtml){
+  var isHtmlText = isHtml ? "html" : "text";
+  window.external.SetTextTranslation(text, isHtmlText);
 };
 
 /*=========================================================================
@@ -1204,16 +1218,6 @@ function SetHelpContextId(contextId){
 *========================================================================*/
 function SetReviewedElectronicRxSignTime(pubTimeTicks, deaNumber, spi){
   window.external.SetReviewedElectronicRxSignTime(pubTimeTicks, deaNumber, spi);
-};
-
-/*=========================================================================
-* SetTextTranslation("<h1>Hello</h1>", "html");
-* Output: Chart Notes
-* Tested: true
-*========================================================================*/
-function SetTextTranslation(text, isHtml){
-  var isHtmlText = isHtml ? "html" : "text";
-  window.external.SetTextTranslation(text, isHtmlText);
 };
 
 /*=========================================================================
