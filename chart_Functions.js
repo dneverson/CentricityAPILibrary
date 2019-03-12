@@ -1,67 +1,82 @@
-/*  \\par new Paragraph line
-*   \\fs## FONT SIZE ANY NUMBER
-*   \\fs20 Normal Size Font
-*   \\fs24 Large font
-*   \\i \\i0 italics
-*   \\b \\b0 bold
-*   \\cb1 Not Highlighted
-*   \\cb2 Highlighted Black
-*   \\plain sets everything to default
+/*=========================================================================
+* Notes for chartNotes
+* \\par     = new Paragraph line
+* \\fs##    = FONT SIZE ANY NUMBER
+* \\fs20    = Normal Size Font
+* \\fs24    = Large font
+* \\i \\i0  = italics
+* \\b \\b0  = bold
+* \\cb1     = Not Highlighted
+* \\cb2     = Highlighted Black
+* \\plain   = sets everything to default
 *
-*
-*
-*
-*
-*/
-function addToChartNote(text){
-  var form_Id = window.external.FormId;
-  var document_variable = "DOCUMENT.TEMPHTML0_" + form_Id;
-  var text_translation = text;
-  window.external.SetChartValue(document_variable, text_translation);
-}
+* \t tab, \n newline, \r carriage return (press enter on keyboard)
+* \" double quote, \' single quote, \\ single backslash.
+*========================================================================*/
 
-//gets CurrentDatetime Varible
-function getCurrentDateTime(){
-  var result = new Date().toLocaleString();
-  return result;
-};
-
-// formats str to bold font for patient chart
-function chartBoldText(str){
-  return "\\b " + str + "\\b0"
-};
-
-// formats str to large font for patient chart
-function chartLargeFont(str){
-  return "\\fs24\\b " + str + "\\fs20\\b0";
-};
-
+/*=========================================================================
+* TMP Global Variables
+*========================================================================*/
 var userText = "";
 var userTextTranslation = "";
 var userNotes = "";
 var chartNotes = "";
 
+/*=========================================================================
+* Replaces all text for current form to provided string
+*========================================================================*/
+function addToChartNote(str){
+  var form_Id = window.external.FormId;
+  var document_variable = "DOCUMENT.TEMPHTML0_" + form_Id;
+  var text_translation = str;
+  window.external.SetChartValue(document_variable, text_translation);
+}
 
+/*=========================================================================
+* gets CurrentDatetime Varible
+*========================================================================*/
+function getCurrentDateTime(){
+  var result = new Date().toLocaleString();
+  return result;
+};
 
+/*=========================================================================
+* formats str to bold font for patient chart
+*========================================================================*/
+function chartBoldText(str){
+  return "\\b " + str + "\\b0"
+};
 
-//ADD to CHART FUNCTION
+/*=========================================================================
+* formats str to large font for patient chart
+*========================================================================*/
+function chartLargeFont(str){
+  return "\\fs24\\b " + str + "\\fs20\\b0";
+};
+
+/*=========================================================================
+* ADD to CHART FUNCTION
+*========================================================================*/
 function updateChartNotes(){
   var formId = getFormId();
   var documentVariable = "DOCUMENT.TEMPHTML0_" + formId;
-
   userTextTranslation = chartNotes + "\n\n\\b Doctors Notes\\b0 \n" + userNotes + "\n\n" + "Last Updated: " + getCurrentDateTime();
   SetChartValue(documentVariable, userTextTranslation);
 };
 
-//USER TEXTBOX ADD TO CHART FUNCTION
+/*=========================================================================
+* USER TEXTBOX ADD TO CHART FUNCTION
+*========================================================================*/
 function userAddToChartNote(){
   userNotes += (this.userText + "\n");
   this.userText = "";
   updateChartNotes();
 };
 
-//This block is to staticly add chart notes behind the scene
-//like the normal forms do.
+/*=========================================================================
+* This block is to staticly add chart notes behind the scene
+  like the normal forms do.
+*========================================================================*/
 function patientChartNotes(){
   chartNotes = (
     "\\b Patient Information \\b0" + "\n" +
