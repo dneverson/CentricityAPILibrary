@@ -53,7 +53,6 @@ function parseDate(date){
   return (mm+'/'+dd+'/'+yyyy);
 };
 
-
 /*=========================================================================
 * checkDxList(checkDx) checks if a patient has a diagnosis in the submitted ICD10
   group in their current diagnosis list.
@@ -89,8 +88,9 @@ function checkMedUseGPI(checkGPI){
 };
 
 /*=========================================================================
-* This function will take in an obs term and return [Value (Date)] of the obs term from the current calendar year.
-  Input - obsTerm: Observation Term
+* This function will take in an obs term and return [Value (Date)] of the obs
+  term from the current calendar year.
+* Input:  obsTerm: Observation Term
 * Output: Observation [Value (Date)] if one exists in current calendar year
           -1 if no observation in current calendar year
 * Tested: true
