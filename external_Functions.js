@@ -13,28 +13,12 @@
 *
 * Sources for this can be found at:
 ** https://github.com/dneverson/CentricityAPILibrary
-* Date: 02/14/2019
+* Date: 03/28/2019
 *========================================================================*/
 
 /**************************************************************************
-* Centricity Functions
+*     **** CENTRICITY FUNCTIONS ****
 **************************************************************************/
-/*=========================================================================
-* Encodes a string for storage via setChartValue
-* Output: string
-* Tested: true
-*========================================================================*/
-function EncodeForSetChartValue(value){
-  var encodedResult = value;
-  if (encodedResult != null) {
-    encodedResult = encodedResult.replace(/{/g, '&#123;');
-    encodedResult = encodedResult.replace(/}/g, '&#125;');
-    encodedResult = encodedResult.replace(/\"/g, '&quot;');
-    encodedResult = encodedResult.replace(/:/g, '&#58;');
-    encodedResult = encodedResult.replace(/,/g, '&#44;');
-  }
-  return encodedResult;
-};
 
 /*=========================================================================
 * Decodes a string from retrieval via getChartValue
@@ -53,9 +37,28 @@ function DecodeFromGetChartValue(value){
   return decodedResult;
 };
 
+/*=========================================================================
+* Encodes a string for storage via setChartValue
+* Output: string
+* Tested: true
+*========================================================================*/
+function EncodeForSetChartValue(value){
+  var encodedResult = value;
+  if (encodedResult != null) {
+    encodedResult = encodedResult.replace(/{/g, '&#123;');
+    encodedResult = encodedResult.replace(/}/g, '&#125;');
+    encodedResult = encodedResult.replace(/\"/g, '&quot;');
+    encodedResult = encodedResult.replace(/:/g, '&#58;');
+    encodedResult = encodedResult.replace(/,/g, '&#44;');
+  }
+  return encodedResult;
+};
+
+
 /**************************************************************************
-* External Varible Functions
+*     **** EXTERNAL VARIBLE FUNCTIONS ****
 **************************************************************************/
+
 /*=========================================================================
 * Output: JSON
 * Tested: true
@@ -81,11 +84,13 @@ function GetAllergies(){
 };
 
 /*=========================================================================
+* NEEDS TESTING
 * Output: unknown - madcapall.js
 * Tested: true
 *========================================================================*/
 function Getattached(){
-  return window.external.attached;
+  return window.external.attached();
+  //return window.external.attached; // tested
 };
 
 /*=========================================================================
@@ -313,7 +318,7 @@ function GetImplantableDevices(){
 };
 
 /*=========================================================================
-* Output: unknown -[]
+* Output: unknown - []
 * Tested: true
 *========================================================================*/
 function GetInteractionOverrides(){
@@ -417,7 +422,9 @@ function GetSigValue(){
 };
 
 
-/* ********** External Functions ********** *========================================================================*/
+/*=========================================================================
+*     **** EXTERNAL FUNCTIONS ****
+*========================================================================*/
 
 /*=========================================================================
 * Output: unknown
@@ -496,8 +503,8 @@ function CheckPendingRxForClinicalMessages(){
 * Output: unknown
 * Tested: false
 *========================================================================*/
-function CheckUserPermission(permissionTypeId, providerId){
-  return window.external.CheckUserPermission(permissionTypeId, providerId);
+function CheckUserPermission(permissionTypeId, pvid){
+  return window.external.CheckUserPermission(permissionTypeId, pvid);
 };
 
 /*=========================================================================
@@ -540,8 +547,8 @@ function DeleteCurrentUserPreference(summaryPreferenceKey){
 * Output: unknown
 * Tested: false
 *========================================================================*/
-function DeleteErxRefillRequest(providerIds){
-  window.external.DeleteErxRefillRequest(providerIds);
+function DeleteErxRefillRequest(pvid){
+  window.external.DeleteErxRefillRequest(pvid);
 };
 
 /*=========================================================================
@@ -557,11 +564,11 @@ function DoMandatoryDrugInteractionOverridesForSign(){
 * Output: string, from quick text symbol used
 * Tested: true
 *========================================================================*/
-function EvaluateHTMLQuickText(quickTextInputStr){
-  if (typeof window.external.EvaluateHTMLQuickText == undefined || quickTextInputStr == null || quickTextInputStr == undefined || quickTextInputStr == "") {
+function EvaluateHTMLQuickText(str){
+  if (typeof window.external.EvaluateHTMLQuickText == undefined || str == null || str == undefined || str == "") {
     return "";
   } else {
-    return window.external.EvaluateHTMLQuickText(quickTextInputStr);
+    return window.external.EvaluateHTMLQuickText(str);
   };
 };
 
@@ -598,11 +605,12 @@ function FreeHtmlFormPatientLock(){
 };
 
 /*=========================================================================
+* NEEDS TESTING
 * Output: unknown - System Error
 * Tested: true
 *========================================================================*/
 function GetActiveUserList(){
-  return window.external.GetActiveUserList();
+  return JSON.parse(window.external.GetActiveUserList());
 };
 
 /*=========================================================================
@@ -627,27 +635,27 @@ function GetBasicFormularyStateAndStatus(ddid){
 * Output: JSON
 * Tested: true
 *========================================================================*/
-function GetBasicProviderInfo(providerId){
-  return window.external.GetBasicProviderInfo(providerId);
+function GetBasicProviderInfo(pvid){
+  return window.external.GetBasicProviderInfo(pvid);
 };
 
 /*=========================================================================
-* GetCarePlan(ppid,true,true);
+* GetCarePlan(pid,true,true);
 * Output: JSON
 * Tested: true
 *========================================================================*/
-function GetCarePlan(patientId, onlySigned, onlyActive){
-  return window.external.GetCarePlan(patientId, onlySigned, onlyActive);
+function GetCarePlan(pid, onlySigned, onlyActive){
+  return window.external.GetCarePlan(pid, onlySigned, onlyActive);
 };
 
 /*=========================================================================
 * GetChartData(patient.pid, true, true, true, true, true);
-* Replaces getPatient() // data gathered by window.external.Demographics
+* Replaces getPatient() //data gathered by window.external.Demographics
 * Output: JSON
 * Tested: true
 *========================================================================*/
-function GetChartData(patientId, includeActiveChartDocument, includeFlagsAndCareAlerts, includeMedAdministrationRequests, includeImmunizationList, includeFamilyHealthHistoryList){
-  return window.external.GetChartData(patientId, includeActiveChartDocument, includeFlagsAndCareAlerts, includeMedAdministrationRequests, includeImmunizationList, includeFamilyHealthHistoryList);
+function GetChartData(pid, incActiveChartDoc, incFlagsAndCareAlerts, incMedAdminReq, incImmunizationList, incFamilyHealthHistoryList){
+  return window.external.GetChartData(pid, incActiveChartDoc, incFlagsAndCareAlerts, incMedAdminReq, incImmunizationList, incFamilyHealthHistoryList);
 };
 
 /*=========================================================================
@@ -771,7 +779,9 @@ function GetLastReceivedUdiValue(){
 };
 
 /*=========================================================================
-* Output: DO DPM FNP FNP-C LNP LPN MD MLT MSN NP OD PA PA-C RN RPA-C RTR M.D. ARNP JR SR I II III MA MS APRN D.O. FAAP F.A.A.P. P.T. D.P.M. P.A. N.P. O.D. CPNP C.P.N.P. CDN CDE C.D.N. C.D.E.
+* Output: DO DPM FNP FNP-C LNP LPN MD MLT MSN NP OD PA PA-C RN RPA-C RTR M.D.
+  ARNP JR SR I II III MA MS APRN D.O. FAAP F.A.A.P. P.T. D.P.M. P.A. N.P. O.D.
+  CPNP C.P.N.P. CDN CDE C.D.N. C.D.E.
 * Tested: true
 *========================================================================*/
 function GetMandatorySuffixes(){
@@ -795,25 +805,25 @@ function GetMedicationClinicalListLockAndCallback(callback){
 };
 
 /*=========================================================================
-* GetPharmaciesForPatient(patientId, 10);
+* GetPharmaciesForPatient(pid, 10);
 * Output: JSON
 * Tested: true
 *========================================================================*/
-function GetPharmaciesForPatient(patientId, numrecent){
-  return window.external.GetPharmaciesForPatient(patientId, numrecent);
+function GetPharmaciesForPatient(pid, num){
+  return window.external.GetPharmaciesForPatient(pid, num);
 };
 
 /*=========================================================================
-* GetPrescriptionRefillData(patientId);
+* GetPrescriptionRefillData(pid);
 * Output: JSON
 * Tested: true
 *========================================================================*/
-function GetPrescriptionRefillData(patientId){
-  return window.external.GetPrescriptionRefillData(patientId);
+function GetPrescriptionRefillData(pid){
+  return window.external.GetPrescriptionRefillData(pid);
 };
 
 /*=========================================================================
-* var patientPrescriptionInfos = [{"patientId": pid,"medicationId": 1234,"drugDescriptionId": 1234,"prescriptionId": 1234}];
+* var patientPrescriptionInfos = [{"patientid": pid,"medicationId": 1234,"drugDescriptionId": 1234,"prescriptionId": 1234}];
 * Output: unknown
 * Tested: false
 *========================================================================*/
@@ -826,33 +836,33 @@ function GetPrescriptionRefillDataByList(patientPrescriptionInfos){
 * Output: JSON
 * Tested: true
 *========================================================================*/
-function GetRecentPharmaciesForPatient(patientId, toprecent){
-  return window.external.GetRecentPharmaciesForPatient(patientId, toprecent);
+function GetRecentPharmaciesForPatient(pid, num){
+  return window.external.GetRecentPharmaciesForPatient(pid, num);
 };
 
 /*=========================================================================
-* GetUserDeas(providerId);
+* GetUserDeas(pvid);
 * Output: JSON
 * Tested: true
 *========================================================================*/
-function GetUserDeas(providerId){
-  return window.external.GetUserDeas(providerId);
+function GetUserDeas(pvid){
+  return window.external.GetUserDeas(pvid);
 };
 
 /*=========================================================================
 * Output: unknown
 * Tested: false
 *========================================================================*/
-function GetVisitSummaryCcda(patientId, documentId, providerId, visitSummaryText){
-  return window.external.GetVisitSummaryCcda(patientId, documentId, providerId, visitSummaryText);
+function GetVisitSummaryCcda(pid, documentId, pvid, visitSummaryText){
+  return window.external.GetVisitSummaryCcda(pid, documentId, pvid, visitSummaryText);
 };
 
 /*=========================================================================
 * Output: unknown
 * Tested: false
 *========================================================================*/
-function IncomingAndPendingInteralRenewalRequests(providerIds){
-  window.external.IncomingAndPendingInteralRenewalRequests(providerIds);
+function IncomingAndPendingInteralRenewalRequests(pvid){
+  window.external.IncomingAndPendingInteralRenewalRequests(pvid);
 };
 
 /*=========================================================================
@@ -946,11 +956,12 @@ function LegacySelectUserGroup(callback){
 * Output: N/A
 * Tested: true
 *========================================================================*/
-function LogError(errorMessage, showExceptionHandlerDialog){
+function LogError(errMsg, showExceptionHandlerDialog){
   try{
-    window.external.LogError(errorMessage, showExceptionHandlerDialog);
+    window.external.LogError(errMsg, showExceptionHandlerDialog);
   }catch(err){
-    // swallow exception from trying to log an error so we don't get in an infinite recursion
+    // swallow exception from trying to log an error so we don't get in an
+    // infinite recursion
   };
 };
 
@@ -967,8 +978,8 @@ function NoOtherExistingClinicalListLock(){
 * Output: N/A
 * Tested: true
 *========================================================================*/
-function OpenRenewals(providerId, patientId){
-  window.external.OpenRenewals(providerId, patientId);
+function OpenRenewals(pvid, pid){
+  window.external.OpenRenewals(pvid, pid);
 };
 
 /*=========================================================================
@@ -976,8 +987,8 @@ function OpenRenewals(providerId, patientId){
 * Output: N/A
 * Tested: true
 *========================================================================*/
-function OpenChart(patientId){
-  window.external.OpenChart(patientId);
+function OpenChart(pid){
+  window.external.OpenChart(pid);
 };
 
 /*=========================================================================
@@ -989,7 +1000,8 @@ function PauseTrace(workflowDescription){
 };
 
 /*=========================================================================
-* Output: unknown - Authentication for your request has failed. Please check your credentials and retry.
+* Output: unknown - Authentication for your request has failed. Please check
+  your credentials and retry.
 * Tested: false
 *========================================================================*/
 function PMPGetReport(currentPatientId, buttonState){
@@ -1029,12 +1041,12 @@ function PostOnRetry(){
 };
 
 /*=========================================================================
-* PreviousAndNextAppointmentListForPatient(patientId,10,10);
+* PreviousAndNextAppointmentListForPatient(pid,10,10);
 * Output: unknown
 * Tested: true
 *========================================================================*/
-function PreviousAndNextAppointmentListForPatient(patientId, numOfPrevApt, numOfNextApt){
-  window.external.PreviousAndNextAppointmentListForPatient(patientId, numOfPrevApt, numOfNextApt);
+function PreviousAndNextAppointmentListForPatient(pid, numOfPrevApt, numOfNextApt){
+  window.external.PreviousAndNextAppointmentListForPatient(pid, numOfPrevApt, numOfNextApt);
 };
 
 /*=========================================================================
@@ -1225,8 +1237,8 @@ function SetReviewedElectronicRxSignTime(pubTimeTicks, deaNumber, spi){
 * Output: Error Message
 * Tested: true
 *========================================================================*/
-function ShowErrorMessageBox(errorMessage, title){
-  window.external.ShowErrorMessageBox(errorMessage, title);
+function ShowErrorMessageBox(errMsg, title){
+  window.external.ShowErrorMessageBox(errMsg, title);
 };
 
 /*=========================================================================
@@ -1268,8 +1280,8 @@ function TestOnlyIntegrationSQLQuery(sqlQuery, num){
 * Output: unknown
 * Tested: false
 *========================================================================*/
-function UnmatchedRenewalRequests(providerIds){
-  window.external.UnmatchedRenewalRequests(providerIds);
+function UnmatchedRenewalRequests(pvid){
+  window.external.UnmatchedRenewalRequests(pvid);
 };
 
 /*=========================================================================
@@ -1299,8 +1311,11 @@ function ViewEligibilityDlg(pid, pvid){
 
 
 /**************************************************************************
-* Testing Functions
+*     **** Testing Functions ****
 **************************************************************************/
+// window.external.CloseWindow; ??nothing / error
+// window.external.PrintGrowthChart(0); ??error / nothing
+
 /*=========================================================================
 * Output: number
 * Tested: true
