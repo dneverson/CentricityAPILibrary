@@ -14,26 +14,16 @@
 *========================================================================*/
 
 /*=========================================================================
-* Example: EvaluateMel("{GET_UNIQUE_WORLDID()};", true);
-* Output: Varies
-* Tested: true
+*     **** FUNCTIONS ****
 *========================================================================*/
-function EvaluateMel(melStatement, showWait, callback){
-  if(showWait){
-    if(callback) return window.external.EvaluateMelCallback(melStatement, showWait, callback);
-    else return window.external.EvaluateMel(melStatement, showWait);
-  }else{
-    if(callback) return window.external.EvaluateMelCallback(melStatement, false, callback);
-    else return window.external.EvaluateMel(melStatement, false);
-  }
-};
 
 /*=========================================================================
-* Output: unknown
-* Tested: false
+* ActiveObservations();
+* Output: "Observations"
+* Tested: true
 *========================================================================*/
-function EvaluateMelCallback(melStatement, showWait, callback){
-  window.external.EvaluateMelCallback(melStatement, showWait, callback);
+function ActiveObservations(){
+  return EvaluateMel('{ACTIVE_OBSERVATIONS}');
 };
 
 /*=========================================================================
@@ -293,6 +283,63 @@ function ErrorMessage(message, title){
 };
 
 /*=========================================================================
+* Example: EvaluateMel("{GET_UNIQUE_WORLDID()};", true);
+* Output: Varies
+* Tested: true
+*========================================================================*/
+function EvaluateMel(melStatement, showWait, callback){
+  if(showWait){
+    if(callback) return window.external.EvaluateMelCallback(melStatement, showWait, callback);
+    else return window.external.EvaluateMel(melStatement, showWait);
+  }else{
+    if(callback) return window.external.EvaluateMelCallback(melStatement, false, callback);
+    else return window.external.EvaluateMel(melStatement, false);
+  }
+};
+
+/*=========================================================================
+* Output: unknown
+* Tested: false
+*========================================================================*/
+function EvaluateMelCallback(melStatement, showWait, callback){
+  window.external.EvaluateMelCallback(melStatement, showWait, callback);
+};
+
+/*=========================================================================
+* Get the value of the observation
+* GetObsNow("BMI");
+* Output: string
+* Tested: true
+*========================================================================*/
+function GetObsNow(obs){
+  return EvaluateMel('{OBSNOW("' + obs.replace(/\\([\s\S])|(")/g, "\\$1$2") + '")}');
+};
+
+/*=========================================================================
+* Output: "Arizona"
+* Tested: true
+*========================================================================*/
+function GetPharmacyState(pharmacyId){
+  return EvaluateMel('{MEL_PHARM_STATE('+pharmacyId+')}');
+};
+
+/*=========================================================================
+* Output: "5131-32973-7145"
+* Tested: true
+*========================================================================*/
+function GetWorldID(pid){
+  return EvaluateMel('{GET_UNIQUE_WORLDID()}');
+};
+
+/*=========================================================================
+* Output: "42"
+* Tested: true
+*========================================================================*/
+function GetServerID(pid){
+  return EvaluateMel('{GET_UNIQUE_SERVERID()}');
+};
+
+/*=========================================================================
 * Output: String - needs to be parsed to JSON
 * Tested: true
 *========================================================================*/
@@ -333,149 +380,6 @@ function ListFHXNew(){
   var result = EvaluateMel("{MEL_LIST_FHX_NEW ('delim')}", true);
   if(result=="-1")         ErrorMessage("Invalid format specified","MEL_LIST_FHX");
   else return result;
-};
-
-/*=========================================================================
-* Example: {MEL_REMOVE_ALLERGY("1226006769001060", "03/12/2013","Allergy disproved")}
-* RemoveAllergy(1863698602852300, '01/21/2019','Allergy disproved');
-* Date formats: MM/DD/YYYY or YYYY/MM/DD
-* reason: Entered in error, Patient corrected, Allergy disproved, Other
-* Output: N/A
-* Tested: true
-*========================================================================*/
-function RemoveAllergy(ID, stopDate, reason){
-  var result = EvaluateMel("{MEL_REMOVE_ALLERGY('"+ID+"','"+stopDate+"','"+reason+"')}", true);
-  if(result=="0")         ErrorMessage("Success","MEL_REMOVE_ALLERGY");
-  else if(result=="-1")   ErrorMessage("Allergy not found","MEL_REMOVE_ALLERGY");
-  else if(result=="-2")   ErrorMessage("Allergy found, but already inactive","MEL_REMOVE_ALLERGY");
-  else if(result=="-3")   ErrorMessage("The end_date is not valid (for example, the date is earlier than the startDate)","MEL_REMOVE_ALLERGY");
-  else if(result=="-5")   ErrorMessage("Reason is Invalid","MEL_REMOVE_ALLERGY");
-  else if(result=="-6")   ErrorMessage("clinical list lock cannot be obtained","MEL_CHANGE_ALLERGY");
-  else if(result=="-7")   ErrorMessage("allergy cannot be removed for some other reason","MEL_REMOVE_ALLERGY");
-  else                    ErrorMessage("Error: unkown reason, returned value: "+ result,"MEL_REMOVE_ALLERGY");
-};
-
-/*=========================================================================
-* Example: {MEL_REMOVE_FHX (FHXID,"Entered in Error")}
-* RemoveFHX("1863774213861820", "Testing");
-* (reason, (25 char))
-* Output: N/A
-* Tested: true
-*========================================================================*/
-function RemoveFHX(FHXID, reason){
-  var result = EvaluateMel("{MEL_REMOVE_FHX('"+FHXID+"','"+reason+"')}", true);
-  if(result=="0")         ErrorMessage("Successfully removed","MEL_REMOVE_FHX");
-  else if(result=="-1")   ErrorMessage("FHXID contains an invalid numeric value, the value is empty, or too long","MEL_REMOVE_FHX");
-  else if(result=="-2")   ErrorMessage("Removal reason is too long, or empty","MEL_REMOVE_FHX");
-  else if(result=="-3")   ErrorMessage("Cannot acquire clinical list lock","MEL_REMOVE_FHX");
-  else if(result=="-4")   ErrorMessage("Cannot remove FHx due to unknown reason","MEL_REMOVE_FHX");
-  else if(result=="-21")  ErrorMessage("Service layer error","MEL_REMOVE_FHX");
-  else                    ErrorMessage("Error: unkown reason, returned value: "+ result,"MEL_REMOVE_FHX");
-};
-
-/*=========================================================================
-* Example: {MEL_REMOVE_PROBLEM(PRID, “09/15/2012”, false, “Resolved”)}
-* RemoveProblem(1830777798699680, "09/15/2018", false, "Correction");
-* Date formats: MM/DD/YYYY or YYYY/MM/DD
-* Reasons: "Resolved", "Inactive", "Ruled out" or "Correction". Default is "Resolved".
-* Output: N/A
-* Tested: true
-*========================================================================*/
-function RemoveProblem(PRID, endDate, approx, reason){
-  var result = EvaluateMel("{MEL_REMOVE_PROBLEM("+PRID+",'"+endDate+"','"+approx+"','"+reason+"')}", true);
-  if(result=="0")         ErrorMessage("Success","MEL_REMOVE_PROBLEM");
-  else if(result=="-1")   ErrorMessage("problem is not found","MEL_REMOVE_PROBLEM");
-  else if(result=="-2")   ErrorMessage("problem is found and it is already inactive","MEL_REMOVE_PROBLEM");
-  else if(result=="-3")   ErrorMessage("endDate is not valid","MEL_REMOVE_PROBLEM");
-  else if(result=="-4")   ErrorMessage("approx argument is not either true or false","MEL_REMOVE_PROBLEM");
-  else if(result=="-5")   ErrorMessage("Reason is Invalid","MEL_REMOVE_PROBLEM");
-  else if(result=="-6")   ErrorMessage("data symbol cannot obtain the clinical list lock","MEL_REMOVE_PROBLEM");
-  else if(result=="-7")   ErrorMessage("other problem is encountered","MEL_REMOVE_PROBLEM");
-  else                    ErrorMessage("Error: unkown reason, returned value: "+ result,"MEL_REMOVE_PROBLEM");
-};
-
-/*=========================================================================
-* ISSUE: documentation is wrong about intake varibles
-* Example: {MEL_UPDATE_CARE_PLAN(123,"Exercise to lose weight","289169006","Reduce 20 pounds","Walk daily for one hour. Eat a light dinner.","2013/05/10","","123|234")}
-* optional: (SNOMEDCTCODE, (20 char)), (target,(255 char)), (instruct, (2000 char)), (endDate)
-* Date formats: MM/DD/YYYY or YYYY/MM/DD
-* Output: N/A
-* Tested: true
-*========================================================================*/
-function UpdateCarePlan(ID, date, goal, SNOMEDCTCODE, target, instruct, setDate, endDate, PRID){
-  var result = EvaluateMel("{MEL_UPDATE_CARE_PLAN('"+ID+"','"+date+"','"+goal+"','"+SNOMEDCTCODE+"','"+target+"','"+instruct+"','"+setDate+"','"+endDate+"','"+PRID+"')}", true);
-  if(result=="0")         ErrorMessage("Success","MEL_UPDATE_CARE_PLAN");
-  else if(result=="-1")   ErrorMessage("Invalid care plan ID","MEL_UPDATE_CARE_PLAN");
-  else if(result=="-2")   ErrorMessage("Description is blank or too long","MEL_UPDATE_CARE_PLAN");
-  else if(result=="-3")   ErrorMessage("Instruction is too long","MEL_UPDATE_CARE_PLAN");
-  else if(result=="-4")   ErrorMessage("Code is too long","MEL_UPDATE_CARE_PLAN");
-  else if(result=="-5")   ErrorMessage("Target is too long","MEL_UPDATE_CARE_PLAN");
-  else if(result=="-6")   ErrorMessage("GoalSetDate is invalid","MEL_UPDATE_CARE_PLAN");
-  else if(result=="-7")   ErrorMessage("GoalMetDate is invalid or less than GoalSetDate","MEL_UPDATE_CARE_PLAN");
-  else if(result=="-9")   ErrorMessage("Invalid PRID","MEL_UPDATE_CARE_PLAN");
-  else if(result=="-10")  ErrorMessage("Cannot add care plan for some other reason","MEL_UPDATE_CARE_PLAN");
-  else if(result=="-11")  ErrorMessage("Another user is updating this care plan. You cannot update until the changes are saved or cancelled.","MEL_UPDATE_CARE_PLAN");
-  else if(result=="-12")  ErrorMessage("The care plan being modified is NOT CURRENT.","MEL_UPDATE_CARE_PLAN");
-  else if(result=="-21")  ErrorMessage("Service layer error","MEL_UPDATE_CARE_PLAN");
-  else                    ErrorMessage("Error: unkown reason, returned value: "+ result,"MEL_UPDATE_CARE_PLAN");
-};
-
-/*=========================================================================
-* Invoke the Update Medications dialog
-* Utilize $timeout since this displays a modal dialog and shouldn't be done during digest cycle
-* Output: N/A
-* Tested: true
-*========================================================================*/
-function UpdateMedications() {
-  EvaluateMel("{UPDATE_MEDS(true)}");
-};
-
-/*=========================================================================
-* Invoke the Update Orders dialog
-* Utilize $timeout since this displays a modal dialog and shouldn't be done during digest cycle
-* Output: N/A
-* Tested: true
-*========================================================================*/
-function UpdateOrders() {
-  EvaluateMel("{UPDATE_ORDERS(true)}");
-};
-
-/*=========================================================================
-* Invoke the Update Problems dialog
-* Utilize $timeout since this displays a modal dialog and shouldn't be done during digest cycle
-* Output: N/A
-* Tested: true
-*========================================================================*/
-function UpdateProblems() {
-  EvaluateMel("{UPDATE_PROBLEMS(true)}");
-};
-
-/*=========================================================================
-* Get the value of the observation
-* GetObsNow("BMI");
-* Output: string
-* Tested: true
-*========================================================================*/
-function GetObsNow(obs){
-  return EvaluateMel('{OBSNOW("' + obs.replace(/\\([\s\S])|(")/g, "\\$1$2") + '")}');
-};
-
-/*=========================================================================
-* SetObsValue("BMI","99");
-* Output: N/A
-* Tested: true
-*========================================================================*/
-function SetObsValue(obs, value) {
-  EvaluateMel('{OBSNOW("' + obs + '","' + value.replace(/\\([\s\S])|(")/g, "\\$1$2") + '")}');
-};
-
-/*=========================================================================
-* ActiveObservations();
-* Output: ????? - "Observations"
-* Tested: true
-*========================================================================*/
-function ActiveObservations(){
-  return EvaluateMel('{ACTIVE_OBSERVATIONS}');
 };
 
 /*=========================================================================
@@ -587,21 +491,21 @@ function ListObsValueByUser(obs){
 };
 
 /*=========================================================================
-* ObsListChanges();
-* Output: "Added new observation of BMI:  (03/08/2019 9:05)"
-* Tested: true
-*========================================================================*/
-function ObsListChanges(){
-  return EvaluateMel('{OBS_LIST_CHANGES()}');
-};
-
-/*=========================================================================
 * ObsAny("BMI");
 * Output: 16.93
 * Tested: true
 *========================================================================*/
 function ObsAny(obs){
   return EvaluateMel('{OBSANY("'+obs+'")}');
+};
+
+/*=========================================================================
+* ObsListChanges();
+* Output: "Added new observation of BMI:  (03/08/2019 9:05)"
+* Tested: true
+*========================================================================*/
+function ObsListChanges(){
+  return EvaluateMel('{OBS_LIST_CHANGES()}');
 };
 
 /*=========================================================================
@@ -687,12 +591,106 @@ function ObsUnit(obs){
 };
 
 /*=========================================================================
+* Output: Opens New Medication Dialog Window
+* Tested: true
+*========================================================================*/
+function OpenMedicationDiag(str){
+  if(typeof str == 'undefined') return EvaluateMel('{NEWMED("")}');
+  else return EvaluateMel('{NEWMED('+str+')}');
+};
+
+/*=========================================================================
+* Output: Opens Drug Interactions and Contraindications Dialog Window
+* Tested: true
+*========================================================================*/
+function OpenOverridesDiag(){
+  return EvaluateMel('{MEL_SHOW_INTERACTIONOVERRIDE_DLG()}', false);
+};
+
+/*=========================================================================
+* Output: Opens New Problem Dialog Window
+* Tested: true
+*========================================================================*/
+function OpenProblemDiag(str){
+  if(typeof str == 'undefined') return EvaluateMel('{NEWPROBLEM("DX OF","")}');
+  else return EvaluateMel('{NEWPROBLEM("DX OF",'+str+')}');
+};
+
+/*=========================================================================
 * PotentObservations();
 * Output: ViewPencilObs
 * Tested: true
 *========================================================================*/
 function PotentObservations(){
   return EvaluateMel('{POTENT_OBSERVATIONS}');
+};
+
+/*=========================================================================
+* Example: {MEL_REMOVE_ALLERGY("1226006769001060", "03/12/2013","Allergy disproved")}
+* RemoveAllergy(1863698602852300, '01/21/2019','Allergy disproved');
+* Date formats: MM/DD/YYYY or YYYY/MM/DD
+* reason: Entered in error, Patient corrected, Allergy disproved, Other
+* Output: N/A
+* Tested: true
+*========================================================================*/
+function RemoveAllergy(ID, stopDate, reason){
+  var result = EvaluateMel("{MEL_REMOVE_ALLERGY('"+ID+"','"+stopDate+"','"+reason+"')}", true);
+  if(result=="0")         ErrorMessage("Success","MEL_REMOVE_ALLERGY");
+  else if(result=="-1")   ErrorMessage("Allergy not found","MEL_REMOVE_ALLERGY");
+  else if(result=="-2")   ErrorMessage("Allergy found, but already inactive","MEL_REMOVE_ALLERGY");
+  else if(result=="-3")   ErrorMessage("The end_date is not valid (for example, the date is earlier than the startDate)","MEL_REMOVE_ALLERGY");
+  else if(result=="-5")   ErrorMessage("Reason is Invalid","MEL_REMOVE_ALLERGY");
+  else if(result=="-6")   ErrorMessage("clinical list lock cannot be obtained","MEL_CHANGE_ALLERGY");
+  else if(result=="-7")   ErrorMessage("allergy cannot be removed for some other reason","MEL_REMOVE_ALLERGY");
+  else                    ErrorMessage("Error: unkown reason, returned value: "+ result,"MEL_REMOVE_ALLERGY");
+};
+
+/*=========================================================================
+* Example: {MEL_REMOVE_FHX (FHXID,"Entered in Error")}
+* RemoveFHX("1863774213861820", "Testing");
+* (reason, (25 char))
+* Output: N/A
+* Tested: true
+*========================================================================*/
+function RemoveFHX(FHXID, reason){
+  var result = EvaluateMel("{MEL_REMOVE_FHX('"+FHXID+"','"+reason+"')}", true);
+  if(result=="0")         ErrorMessage("Successfully removed","MEL_REMOVE_FHX");
+  else if(result=="-1")   ErrorMessage("FHXID contains an invalid numeric value, the value is empty, or too long","MEL_REMOVE_FHX");
+  else if(result=="-2")   ErrorMessage("Removal reason is too long, or empty","MEL_REMOVE_FHX");
+  else if(result=="-3")   ErrorMessage("Cannot acquire clinical list lock","MEL_REMOVE_FHX");
+  else if(result=="-4")   ErrorMessage("Cannot remove FHx due to unknown reason","MEL_REMOVE_FHX");
+  else if(result=="-21")  ErrorMessage("Service layer error","MEL_REMOVE_FHX");
+  else                    ErrorMessage("Error: unkown reason, returned value: "+ result,"MEL_REMOVE_FHX");
+};
+
+/*=========================================================================
+* Example: {MEL_REMOVE_PROBLEM(PRID, “09/15/2012”, false, “Resolved”)}
+* RemoveProblem(1830777798699680, "09/15/2018", false, "Correction");
+* Date formats: MM/DD/YYYY or YYYY/MM/DD
+* Reasons: "Resolved", "Inactive", "Ruled out" or "Correction". Default is "Resolved".
+* Output: N/A
+* Tested: true
+*========================================================================*/
+function RemoveProblem(PRID, endDate, approx, reason){
+  var result = EvaluateMel("{MEL_REMOVE_PROBLEM("+PRID+",'"+endDate+"','"+approx+"','"+reason+"')}", true);
+  if(result=="0")         ErrorMessage("Success","MEL_REMOVE_PROBLEM");
+  else if(result=="-1")   ErrorMessage("problem is not found","MEL_REMOVE_PROBLEM");
+  else if(result=="-2")   ErrorMessage("problem is found and it is already inactive","MEL_REMOVE_PROBLEM");
+  else if(result=="-3")   ErrorMessage("endDate is not valid","MEL_REMOVE_PROBLEM");
+  else if(result=="-4")   ErrorMessage("approx argument is not either true or false","MEL_REMOVE_PROBLEM");
+  else if(result=="-5")   ErrorMessage("Reason is Invalid","MEL_REMOVE_PROBLEM");
+  else if(result=="-6")   ErrorMessage("data symbol cannot obtain the clinical list lock","MEL_REMOVE_PROBLEM");
+  else if(result=="-7")   ErrorMessage("other problem is encountered","MEL_REMOVE_PROBLEM");
+  else                    ErrorMessage("Error: unkown reason, returned value: "+ result,"MEL_REMOVE_PROBLEM");
+};
+
+/*=========================================================================
+* SetObsValue("BMI","99");
+* Output: N/A
+* Tested: true
+*========================================================================*/
+function SetObsValue(obs, value) {
+  EvaluateMel('{OBSNOW("' + obs + '","' + value.replace(/\\([\s\S])|(")/g, "\\$1$2") + '")}');
 };
 
 /*=========================================================================
@@ -703,6 +701,237 @@ function PotentObservations(){
 function SumActiveObservations(){
   return EvaluateMel('{SUM_ACTIVE_OBSERVATIONS}');
 };
+
+/*=========================================================================
+* ISSUE: documentation is wrong about intake varibles
+* Example: {MEL_UPDATE_CARE_PLAN(123,"Exercise to lose weight","289169006","Reduce 20 pounds","Walk daily for one hour. Eat a light dinner.","2013/05/10","","123|234")}
+* optional: (SNOMEDCTCODE, (20 char)), (target,(255 char)), (instruct, (2000 char)), (endDate)
+* Date formats: MM/DD/YYYY or YYYY/MM/DD
+* Output: N/A
+* Tested: true
+*========================================================================*/
+function UpdateCarePlan(ID, date, goal, SNOMEDCTCODE, target, instruct, setDate, endDate, PRID){
+  var result = EvaluateMel("{MEL_UPDATE_CARE_PLAN('"+ID+"','"+date+"','"+goal+"','"+SNOMEDCTCODE+"','"+target+"','"+instruct+"','"+setDate+"','"+endDate+"','"+PRID+"')}", true);
+  if(result=="0")         ErrorMessage("Success","MEL_UPDATE_CARE_PLAN");
+  else if(result=="-1")   ErrorMessage("Invalid care plan ID","MEL_UPDATE_CARE_PLAN");
+  else if(result=="-2")   ErrorMessage("Description is blank or too long","MEL_UPDATE_CARE_PLAN");
+  else if(result=="-3")   ErrorMessage("Instruction is too long","MEL_UPDATE_CARE_PLAN");
+  else if(result=="-4")   ErrorMessage("Code is too long","MEL_UPDATE_CARE_PLAN");
+  else if(result=="-5")   ErrorMessage("Target is too long","MEL_UPDATE_CARE_PLAN");
+  else if(result=="-6")   ErrorMessage("GoalSetDate is invalid","MEL_UPDATE_CARE_PLAN");
+  else if(result=="-7")   ErrorMessage("GoalMetDate is invalid or less than GoalSetDate","MEL_UPDATE_CARE_PLAN");
+  else if(result=="-9")   ErrorMessage("Invalid PRID","MEL_UPDATE_CARE_PLAN");
+  else if(result=="-10")  ErrorMessage("Cannot add care plan for some other reason","MEL_UPDATE_CARE_PLAN");
+  else if(result=="-11")  ErrorMessage("Another user is updating this care plan. You cannot update until the changes are saved or cancelled.","MEL_UPDATE_CARE_PLAN");
+  else if(result=="-12")  ErrorMessage("The care plan being modified is NOT CURRENT.","MEL_UPDATE_CARE_PLAN");
+  else if(result=="-21")  ErrorMessage("Service layer error","MEL_UPDATE_CARE_PLAN");
+  else                    ErrorMessage("Error: unkown reason, returned value: "+ result,"MEL_UPDATE_CARE_PLAN");
+};
+
+/*=========================================================================
+* Invoke the Update Medications dialog
+* Utilize $timeout since this displays a modal dialog and shouldn't be done during digest cycle
+* Output: N/A
+* Tested: true
+*========================================================================*/
+function UpdateMedications() {
+  EvaluateMel("{UPDATE_MEDS(true)}");
+};
+
+/*=========================================================================
+* Invoke the Update Orders dialog
+* Utilize $timeout since this displays a modal dialog and shouldn't be done during digest cycle
+* Output: N/A
+* Tested: true
+*========================================================================*/
+function UpdateOrders() {
+  EvaluateMel("{UPDATE_ORDERS(true)}");
+};
+
+/*=========================================================================
+* Invoke the Update Problems dialog
+* Utilize $timeout since this displays a modal dialog and shouldn't be done during digest cycle
+* Output: N/A
+* Tested: true
+*========================================================================*/
+function UpdateProblems() {
+  EvaluateMel("{UPDATE_PROBLEMS(true)}");
+};
+
+
+/*=========================================================================
+*     **** NEEDS TESTING / FURTHER TESTING ****
+*========================================================================*/
+
+/*=========================================================================
+* Arguments: 1 - medicationId, 2 - Parmacy Name, 3 - RxType, 4 - Quantity,
+  5 - Refill, 6 - DAW.
+* Output: returns 0
+* Tested: needs further testing
+*========================================================================*/
+function approveERXRequest(request){
+  return EvaluateMel('{MEL_ERX_APPROV("'+request+'")}', true);
+};
+
+/*=========================================================================
+* Output:
+* Tested: needs testing
+*========================================================================*/
+function changePrescriptionPharmacy(ptid, pharmacyId, rxType){
+  return EvaluateMel('{MEL_CHANGE_MEDICATION_RX('+ptid+','+pharmacyId+',"'+rxType+'")}', true);
+};
+
+/*=========================================================================
+* Output:
+* Tested: needs testing
+*========================================================================*/
+function changePrescriptionOrderNumber(prescriptionId, prescriptionOrderNumber){
+  return EvaluateMel('{MEL_UPDATE_PRESCRIPTIONORDERNUMBER('+prescriptionId+',"'+prescriptionOrderNumber+'")}', true);
+};
+
+/*=========================================================================
+* Arguments: 1 - medicationId, 2 - Parmacy Id, 3 - RxType, 4 - Quantity,
+  5 - Refill, 6 - DAW., 7 - PrintDx, 8 - Rx Comments, 9 - Force Create New Rx,
+  10 - clinical date, 11 - ptid, 12 - prescriberid, 13 - ShouldLockacquire,
+  14 - displayUnit
+* Output:
+* Tested: needs further testing
+*========================================================================*/
+function changePrescription(medicationId, pharmacyId, rxType, quantity, refills, daw, prescriptionComments, createNewRx, ShouldLockAcquire, clinicalDate, prescriptionId, prescriberId, displayUnit){
+  return EvaluateMel('{MEL_ADD_RX("'+medicationId+'","'+pharmacyId+'","'+rxType+'",\"'+quantity+'\",\"'+refills+'\","'+daw+'",false,\"'+formatDataForMEL(prescriptionComments)+'\",'+forceCreate+',"'+rxClinicalDate+'","'+ptid+'","'+authProvider+'",'+ShouldLockAcquire+',"'+displayUnitLookup+'")}', true);
+};
+
+/*=========================================================================
+* Arguments: 1 - medicationId, 2 - Parmacy Name, 3 - RxType, 4 - Quantity,
+  5 - Refill, 6 - DAW.
+* Output: returns 0
+* Tested: needs further testing
+*========================================================================*/
+function denyERXRequest(request){
+  return EvaluateMel('{MEL_ERX_DENY("'+request+'")}', true);
+};
+
+/*=========================================================================
+* Arguments: 1 - medicationId, 2 - Parmacy Name, 3 - RxType, 4 - Quantity,
+  5 - Refill, 6 - DAW.
+* Output: returns 0
+* Tested: needs further testing
+*========================================================================*/
+function dntfERXRequest(request, modifiedRequest){
+  return EvaluateMel('{MEL_ERX_DNTF("'+request+'","'+modifiedRequest+'")}', true);
+};
+
+/*=========================================================================
+* Arguments: 1 - medicationId, 2 - Parmacy Name, 3 - RxType, 4 - Quantity,
+  5 - Refill, 6 - DAW.
+* Output: returns 0
+* Tested: needs further testing
+*========================================================================*/
+function dnERXRequest(request, modifiedRequest){
+  return EvaluateMel('{MEL_ERX_DN("'+request+'","'+modifiedRequest+'")}', true);
+};
+
+/*=========================================================================
+* Output:
+* Tested: needs testing
+*========================================================================*/
+function doPatientEducationLookup(sdid, genericName, ddid, desc){
+  return EvaluateMel('{MEL_PATIENTEDUCATION_FORMEDICATION("'+sdid+'","'+genericName+'","'+ddid+'","'+desc+'")}', true);
+};
+
+/*=========================================================================
+* Output:
+* Tested: needs testing
+*========================================================================*/
+function doClinicalDecisionSupportLookup(sdid, genericName, ddid, desc){
+  return EvaluateMel('{MEL_CDS_FORMEDICATION("'+sdid+'","'+genericName+'","'+ddid+'","'+desc+'")}', true);
+};
+
+/*=========================================================================
+* Output: "T"
+* Tested: true
+*========================================================================*/
+function eRxEnabled(){
+  return EvaluateMel('{Clinic._EnableOnlineRx}', true);
+};
+
+/*=========================================================================
+* Output:
+* Tested: needs testing
+*========================================================================*/
+function formatDataForMEL(formatData){
+  if(formatData != null){
+    formatData = formatData.replace(/\\/g, '\\\\');
+    formatData = formatData.replace(/"/g, '\\"');
+    formatData = formatData.replace(/'/g, '\\\'');
+  }
+  return formatData;
+};
+
+/*=========================================================================
+* Output: ??
+* Tested: true
+*========================================================================*/
+function getPrescriptionState(){
+  return EvaluateMel('{DOCUMENT._ML_RX_STATE}', true);
+};
+
+/*=========================================================================
+* Output: "FLASE"
+* Tested: true
+*========================================================================*/
+function gotoChartModule(pid){
+  return EvaluateMel('{GOTO_CHART_MODULE("'+pid+'")}', true);
+};
+
+/*=========================================================================
+* Output: returns 0
+* Tested: needs further testing
+*========================================================================*/
+function removeMedication(medId){
+  return EvaluateMel('{MEL_UNDO_MEDICATION('+medId+')}', true);
+};
+
+/*=========================================================================
+* Delete the prescription. If this is a renewal request do not ignore rxType so
+  cleanup of any DN rows can be performed
+* Output: returns -3
+* Tested: needs further testing
+*========================================================================*/
+function removePrescription(ptid, ignoreRxType){
+  if(ignoreRxType) return EvaluateMel('{MEL_DELETE_ERX("'+ptid+'",true)}', true);
+  else return EvaluateMel('{MEL_DELETE_ERX("'+ptid+'",false)}', true);
+};
+
+/*=========================================================================
+* sdid == $window.external.ActiveSdid
+* Output:
+* Tested: needs further testing
+*========================================================================*/
+function showHtmlFormDialog(formUrl, formName, sdid, width, height, parentFormId){
+  return EvaluateMel('{SHOW_HTML_FORM("'+formUrl+'","'+formName+'",'+sdid+','+width+','+height+','+parentFormId+')}', false);
+};
+
+/*=========================================================================
+* Output:
+* Tested: needs testing
+*========================================================================*/
+function techincalFailureForEpcs(prescriptionId, errorCode, errorMessage){
+  return EvaluateMel('{MEL_ERROR_TRANSMIT_ERX('+prescriptionId+','+errorCode+',"'+formatDataForMEL(errorMessage)+'")}', true);
+};
+
+/*=========================================================================
+* Output:
+* Tested: needs testing
+*========================================================================*/
+function validateScheduledRx(ddid, refills, quantity, rxtype, classcode, pvid){
+  return EvaluateMel('{MEL_VALIDATE_RX('+ddid+',"'+refills+'","'+quantity+'","'+rxtype+','+classcode+'",'+pvid+')}', true);
+};
+
+
+/*=========================================================================
+*     **** CUSTOM FUNCTIONS ****
+*========================================================================*/
 
 /*=========================================================================
 * Version 01 - Help parse delimited Lists from example ListObs()
@@ -852,7 +1081,9 @@ function GetCurrentUser(){
 };
 
 /*=========================================================================
-* Same as GetChartData(patientId, includeActiveChartDocument, includeFlagsAndCareAlerts, includeMedAdministrationRequests, includeImmunizationList, includeFamilyHealthHistoryList)
+* Same as GetChartData(patientId, includeActiveChartDocument,
+  includeFlagsAndCareAlerts, includeMedAdministrationRequests,
+  includeImmunizationList, includeFamilyHealthHistoryList)
 * Output: JSON
 * Tested: true
 *========================================================================*/
