@@ -15,8 +15,8 @@ Library for GE Centricity CPS 12.2 + API
 
 ## Authors
 
-* **Derry Everson** - [Arachnid Server](https://www.arachnidserver.com)
+* **Derry Everson** - [Catalyst Medical Group](https://www.catalystmedicalgroup.com)
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+TBD
