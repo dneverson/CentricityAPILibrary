@@ -30,7 +30,7 @@ function addToChartNote(str){
   var document_variable = "DOCUMENT.TEMPHTML0_" + form_Id;
   var text_translation = str;
   window.external.SetChartValue(document_variable, text_translation);
-}
+};
 
 /*=========================================================================
 * gets CurrentDatetime Varible
