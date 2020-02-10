@@ -134,6 +134,39 @@ function AddMedication(desc, instruct, startDate, ID, endDate, quanity, refills,
 };
 
 /*=========================================================================
+Type ID Description
+1 Provide TOC Referral Summary
+2 Provide Clinical Visit Summary to Patient
+3 Patient Reminder Sent
+4 Initiated TOC with Patient
+5 Patient Declined Clinical Visit Summary
+12 Provide Patient Education
+13 Reconciled TOC Medications
+509 Successful unlink of patient validation from Patient Portal
+510 Patient Portal Access Available
+511 Chart summary viewed in Patient Portal
+512 Chart summary downloaded from Patient Portal
+513 Chart summary transmitted from Patient Portal
+514 TOC/Referral Summary received by HISP
+519 Clinical Visit Summary Sent to Patient
+520 Secure Message sent by patient
+521 Patient Care Reminder Sent
+//  window.alert(EvaluateMel('{GET_MUACTIVITY_LOG()}'));
+*========================================================================*/
+function AddMUActivityLog(activityID, loginName, description){
+  var result = EvaluateMel('{ADD_MUACTIVITY_LOG('+activityID+',"'+loginName+'","'+description+'")}', true);
+  if(result=="")         ErrorMessage("Success","ADD_MUACTIVITY_LOG");
+  else if(result=="-1")   ErrorMessage("Not enough parameters","ADD_MUACTIVITY_LOG");
+  else if(result=="-2")   ErrorMessage("Invalid type for a parameter","ADD_MUACTIVITY_LOG");
+  else if(result=="-3")   ErrorMessage("Too many parameters","ADD_MUACTIVITY_LOG");
+  else if(result=="-4")   ErrorMessage("Invalid mu activity type log id","ADD_MUACTIVITY_LOG");
+  else if(result=="-5")   ErrorMessage("Not in an active document","ADD_MUACTIVITY_LOG");
+  else if(result=="-6")   ErrorMessage("There is not a current patient","ADD_MUACTIVITY_LOG");
+  else if(result=="-7")   ErrorMessage("Invalid loginname","ADD_MUACTIVITY_LOG");
+  else                    ErrorMessage("Error: unkown reason, returned value: "+ result,"ADD_MUACTIVITY_LOG");
+};
+
+/*=========================================================================
 * Needs Work: Error: Invalid order category
 * Example: {MEL_ADD_ORDER("S","Cardiology Fee Ticket","Dual Chamber Electronic Analysis with reprogramming","26","ICD10-R45.8|ICD-401.1","ACUTE MI|HYPERTENSION","Include interpretation","1","S","smitchell","08/22/2003")}
 * AddOrder("S","Cardiology Fee Ticket","Dual Chamber Electronic Analysis with reprogramming","26","ICD10-R45.8|ICD-401.1","ACUTE MI|HYPERTENSION","Include interpretation","1","S","smitchell","08/22/2003");
@@ -279,7 +312,7 @@ function ChangeProblem(ID, desc, code, startDate, approxStart, stopDate, approxS
 * Tested: true
 *========================================================================*/
 function ErrorMessage(message, title){
-  window.external.ShowErrorMessageBox(message, title);
+  //window.external.ShowErrorMessageBox(message, title);
 };
 
 /*=========================================================================
@@ -303,6 +336,16 @@ function EvaluateMel(melStatement, showWait, callback){
 *========================================================================*/
 function EvaluateMelCallback(melStatement, showWait, callback){
   window.external.EvaluateMelCallback(melStatement, showWait, callback);
+};
+
+/*=========================================================================
+* Output: object array
+* Tested: true
+*========================================================================*/
+function GetFormList(){
+  var ls = EvaluateMel("{GET_FORM_LIST()}");
+  var result = ParseDelimList2(ls);
+  return result;
 };
 
 /*=========================================================================
@@ -591,6 +634,45 @@ function ObsUnit(obs){
 };
 
 /*=========================================================================
+* Output: Opens Update Alleriegs or Adverse Reactions Dialog Window
+* Tested: true
+*========================================================================*/
+function OpenAllergiesDiag(){
+  return EvaluateMel('{ADD_ALLERGIES}');
+};
+
+/*=========================================================================
+* Output: Opens Update Directives Dialog Window
+* Tested: true
+*========================================================================*/
+function OpenDirectivesDiag(){
+  return EvaluateMel('{ADD_DIRECTIVES}');
+};
+
+/*=========================================================================
+* Output: Opens the specified form component in the current update
+* tab = open indicated tab on form component, blank = default first tab
+* Tested: true
+*========================================================================*/
+function OpenFormComp(path,tab){
+  if(!tab) EvaluateMel('{OPEN_FORM_COMP("'+path+'")}');
+  else return EvaluateMel('{OPEN_FORM_COMP("'+path+'","'+tab+'")}');
+};
+
+/*=========================================================================
+* Output: Opens the specified handout specified by the str
+* Tested: true
+* Returns: url for the description in AddMUActivityLog
+*========================================================================*/
+function OpenHandout(str){
+  var desc = ("Handout - " + str);
+  var url = "https://www.micromedexsolutions.com/carenotes/librarian/accessv3?mainSearchCriteria.v.c=&mainSearchCriteria.v.cs=&mainSearchCriteria.v.dn="+str+"&holder.assignedEntity.n=GEC&holder.assignedEntity.certificateText=T46020";
+  //showHtmlFormDialog(url,desc);
+  window.open(url,desc,"menubar=1,location=1,toolbar=1,titlebar=1,status=1,scrollbars=1,resizable=1");
+  return url;
+};
+
+/*=========================================================================
 * Output: Opens New Medication Dialog Window
 * Tested: true
 *========================================================================*/
@@ -614,6 +696,14 @@ function OpenOverridesDiag(){
 function OpenProblemDiag(str){
   if(typeof str == 'undefined') return EvaluateMel('{NEWPROBLEM("DX OF","")}');
   else return EvaluateMel('{NEWPROBLEM("DX OF",'+str+')}');
+};
+
+/*=========================================================================
+* Output: Opens New QMAF Dialog Window
+* Tested: true
+*========================================================================*/
+function OpenQMAFDiag(){
+  return EvaluateMel('{SHOW_HTML_FORM("//localserver/EncounterForms/HtmlForms/QualityMeasures/QualityMeasures.html","Quality Measures - Valley Medical Center, PLLC")}', true);
 };
 
 /*=========================================================================
@@ -906,10 +996,10 @@ function removePrescription(ptid, ignoreRxType){
 /*=========================================================================
 * sdid == $window.external.ActiveSdid
 * Output:
-* Tested: needs further testing
+* Tested: true
 *========================================================================*/
 function showHtmlFormDialog(formUrl, formName, sdid, width, height, parentFormId){
-  return EvaluateMel('{SHOW_HTML_FORM("'+formUrl+'","'+formName+'",'+sdid+','+width+','+height+','+parentFormId+')}', false);
+  return EvaluateMel('{SHOW_HTML_FORM("'+formUrl+'","'+formName+'")}', true);
 };
 
 /*=========================================================================
@@ -972,6 +1062,39 @@ function ParseDelimList2(str){
     });
   });
 };
+
+
+/*=========================================================================
+* Searches forms list for a form indicated by string search value
+* Output: Form file path
+* Tested: true
+*========================================================================*/
+function SearchFormList(str){
+  var result = "";
+  var ls = GetFormList();
+  for(var i=0; i< ls.length; i++){
+    var found = JSON.stringify(ls[i][1]).match(new RegExp('".*'+ str +'.*"' ,'gi'));
+    if(found){
+      result = ls[i][0]+ls[i][1];
+      break;
+    }
+  };
+  return result;
+};
+
+
+/*=========================================================================
+* Searches string by string search value
+* Output: boolen
+* Tested: true
+*========================================================================*/
+function SearchString(val,str){
+  var result = "";
+  var found = JSON.stringify(str.toLowerCase()).match(new RegExp('".*'+ val.toLowerCase() +'.*"' ,'gi'));
+  found?result = true:result = false;
+  return result;
+};
+
 
 /*=========================================================================
 * List all observation values, optionally with the date, of the specified
@@ -1094,6 +1217,7 @@ function GetPatient(){
     var perLen = (data.person.personNameList.length > 0)?true:false;
     var mailLen = (data.person.mailingAddressList.length > 0)?true:false;
     var result = {
+      pcp: EvaluateMel('{PATIENT.PCP}'),
       pid: data.patientKey,
       printId: ((data.identifierList.length > 1)?data.identifierList[1].idValue:""),
       patientId: ((data.identifierList.length > 1)?data.identifierList[1].idValue:""),
@@ -1119,8 +1243,8 @@ function GetPatient(){
       data.person.birthDate.substr(0,4),
       dateOfDeath: data.person.deceaseTime,
       sex: data.person.genderCode,
-      race: data.person.raceList,
-      ethnicity: data.cdcEthnicityCode,
+      race: EvaluateMel('{PATIENT.RACE}'),
+      ethnicity: EvaluateMel('{PATIENT.ETHNICITY}'),
       religion: data.person.religionCode,
       language: data.languageList,
       preferredLanguage: data.preferredLanguage,

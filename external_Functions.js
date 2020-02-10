@@ -90,7 +90,6 @@ function GetAllergies(){
 *========================================================================*/
 function Getattached(){
   return window.external.attached();
-  //return window.external.attached; // tested
 };
 
 /*=========================================================================
@@ -664,7 +663,9 @@ function GetChartData(pid, incActiveChartDoc, incFlagsAndCareAlerts, incMedAdmin
 * Tested: true
 *========================================================================*/
 function GetChartValue(chartVariableName){
+  window.alert(chartVariableName)
   var result = window.external.GetChartValue(chartVariableName);
+  window.alert(result)
   return decodeFromGetChartValue(result);
 };
 
