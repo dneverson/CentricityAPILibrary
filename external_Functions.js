@@ -26,7 +26,7 @@
 * Tested: true
 *========================================================================*/
 function DecodeFromGetChartValue(value){
-  var decodedResult = value;
+  var decodedResult = value; 
   if (decodedResult != null) {
     decodedResult = decodedResult.replace(/&#123;/g, '{');
     decodedResult = decodedResult.replace(/&#125;/g, '}');
