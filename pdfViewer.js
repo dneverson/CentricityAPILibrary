@@ -1,9 +1,6 @@
 /*=========================================================================
 * @author Derry Everson
 *
-* Work:
-** https://www.catalystmedicalgroup.com
-** deverson@valleymedicalcenter.com
 * Personal:
 ** https://www.arachnidserver.com
 ** dneverson@lcmail.lcsc.edu
